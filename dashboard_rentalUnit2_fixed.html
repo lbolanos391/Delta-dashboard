@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Delta Monitor Dashboard</title>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding-top: 50px;
+    }
+    h1 {
+      font-size: 28px;
+    }
+    .reading {
+      font-size: 22px;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1 id="title">Live Readings</h1>
+  <div class="reading" id="supply">Supply: --</div>
+  <div class="reading" id="return">Return: --</div>
+  <div class="reading" id="dt">DT: --</div>
+  <div class="reading" id="status">Status: --</div>
+
+  <script>
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-RWj-LQmorjqYVg8IRVCx1vR89DijMSw",
+      authDomain: "delta-monitor-3dd74.firebaseapp.com",
+      databaseURL: "https://delta-monitor-3dd74-default-rtdb.firebaseio.com",
+      projectId: "delta-monitor-3dd74",
+      storageBucket: "delta-monitor-3dd74.appspot.com",
+      messagingSenderId: "357464872085",
+      appId: "1:357464872085:web:d16aa36936c6715969b79c",
+      measurementId: "G-MN71HG3PFT"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+
+    // Hardcoded for now (for iPhone testing)
+    const unitID = "rentalUnit2";
+    document.getElementById("title").textContent = "Live Readings for " + unitID;
+
+    const dbRef = firebase.database().ref("/units/" + unitID);
+
+    dbRef.on("value", (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        document.getElementById("supply").textContent = `Supply: ${data.supply ?? "--"}`;
+        document.getElementById("return").textContent = `Return: ${data.return ?? "--"}`;
+        document.getElementById("dt").textContent = `DT: ${data.dt ?? "--"}`;
+        document.getElementById("status").textContent = `Status: ${data.status ?? "--"}`;
+      }
+    });
+  </script>
+</body>
+</html>
