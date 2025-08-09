@@ -11,20 +11,17 @@ function getUnitId(defaultUnit) {
   const params = new URLSearchParams(location.search);
   return params.get('unit') || defaultUnit || 'Home-56TS';
 }
-function cardHtml(v) {
-  const s = Number(v.supply);
-  const r = Number(v.return);
+function rowHtml(v) {
+  const s = Number(v.supply), r = Number(v.return);
   const dt = Math.abs(Number.isFinite(Number(v.delta)) ? Number(v.delta) : (s - r));
   const ts = v.ts ? new Date(v.ts).toLocaleString() : '';
-  const sup = Number.isFinite(s) ? s.toFixed(0) : '--';
-  const ret = Number.isFinite(r) ? r.toFixed(0) : '--';
   return `
     <div class="row">
-      <div style="display:flex; gap:8px; align-items:baseline;">
+      <div style="display:flex;gap:8px;align-items:baseline;">
         <strong style="font-size:20px;">${Number.isFinite(dt) ? dt.toFixed(0) : '--'}°F</strong>
         <span class="muted">${ts}</span>
       </div>
-      <div class="muted">Supply: ${sup}°F • Return: ${ret}°F • ${v.status ?? ''}</div>
+      <div class="muted">Supply: ${Number.isFinite(s)?s.toFixed(0):'--'}°F • Return: ${Number.isFinite(r)?r.toFixed(0):'--'}°F • ${v.status ?? ''}</div>
     </div>
   `;
 }
@@ -41,13 +38,16 @@ loadConfig().then(cfg => {
 
   signInAnonymously(auth);
   onAuthStateChanged(auth, () => {
-    const logsRef = query(ref(db, `units/${unitId}/logs`), limitToLast(200));
+    // Increase history depth if you want (200 ≈ ~100 minutes at 30s/log)
+    const logsRef = query(ref(db, `units/${unitId}/logs`), limitToLast(500));
     onValue(logsRef, (snap) => {
       const list = document.getElementById('list');
       list.innerHTML = '';
       const rows = [];
       snap.forEach(child => rows.push({ key: child.key, ...child.val() }));
-      rows.reverse().forEach(v => list.insertAdjacentHTML('beforeend', cardHtml(v)));
+      // Sort newest first by ts (falls back to 0 if missing)
+      rows.sort((a,b) => (b.ts ?? 0) - (a.ts ?? 0));
+      rows.forEach(v => list.insertAdjacentHTML('beforeend', rowHtml(v)));
     });
   });
 }).catch(err => {
