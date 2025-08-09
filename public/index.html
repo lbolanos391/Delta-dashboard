@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DeltaSnap • Live</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0ea5e9">
+  <link rel="icon" href="/icons/icon-192.png">
+  <script defer type="module" src="/app.js"></script>
+  <style>
+    :root { --pad: 16px; --radius: 16px; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin:0; padding:var(--pad); max-width:720px }
+    header { display:flex; align-items:center; gap:8px; }
+    h1 { margin:0; }
+    a { text-decoration:none; }
+    main { margin-top:18px; }
+    .card { border:1px solid #e5e7eb; border-radius:var(--radius); padding:var(--pad); }
+    .big { font-size:48px; line-height:1; font-weight:800; }
+    .muted { opacity:.7; }
+  </style>
+</head>
+<!-- test auto deploy -->
+<body>
+  <header>
+    <h1>DeltaSnap</h1>
+    <span id="unit" class="muted"></span>
+    <a id="historyLink" style="margin-left:auto;" href="#">View history</a>
+  </header>
+
+  <main class="card">
+    <div class="big">
+      <span id="dt">--</span> <span style="font-size:24px;">°F</span>
+    </div>
+    <div style="margin-top:8px; font-size:18px">
+      <div id="status">Status: --</div>
+      <div id="supply">Supply: -- °F</div>
+      <div id="return">Return: -- °F</div>
+      <div id="updated" class="muted">—</div>
+    </div>
+    <p class="muted" style="margin-top:16px">Tip: Add to Home Screen to install.</p>
+  </main>
+</body>
+</html>

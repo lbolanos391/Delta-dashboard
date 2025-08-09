@@ -1,0 +1,7 @@
+{
+  "firebase": {
+    "apiKey": "AIzaSyAv0nVyILqjG3VC-sM-iynTjwerdRF2cF8",
+    "databaseURL": "https://deltasnap-default-rtdb.firebaseio.com"
+  },
+  "defaultUnit": "Home-56TS"
+}
