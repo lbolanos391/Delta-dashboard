@@ -2,48 +2,38 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/fireba
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
 
-// Register service worker for PWA
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js');
-}
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');
 
 async function loadConfig() {
-  const res = await fetch('/config.json');
-  if (!res.ok) throw new Error('Missing /config.json');
-  return res.json();
+  const res = await fetch('/config.json'); if (!res.ok) throw new Error('Missing /config.json'); return res.json();
 }
-
 function getUnitId(defaultUnit) {
   const params = new URLSearchParams(location.search);
   return params.get('unit') || defaultUnit || 'Home-56TS';
 }
+function fmt(n){ const x=Number(n); return Number.isFinite(x)?x.toFixed(0):'--'; }
 
-function fmt(n) {
-  const x = Number(n);
-  return Number.isFinite(x) ? x.toFixed(0) : '--';
-}
+const dtEl=document.getElementById('dt');
+const statusEl=document.getElementById('status');
+const supplyEl=document.getElementById('supply');
+const returnEl=document.getElementById('return');
+const updatedEl=document.getElementById('updated');
 
-const dtEl = document.getElementById('dt');
-const statusEl = document.getElementById('status');
-const supplyEl = document.getElementById('supply');
-const returnEl = document.getElementById('return');
-const updatedEl = document.getElementById('updated');
-
-loadConfig().then(cfg => {
+loadConfig().then(cfg=>{
   const { firebase, defaultUnit } = cfg;
   const app = initializeApp(firebase);
   const db  = getDatabase(app);
-  const auth = getAuth(app);
+  const auth= getAuth(app);
 
   const unitId = getUnitId(defaultUnit);
   document.getElementById('unit').textContent = `• ${unitId}`;
   document.getElementById('historyLink').href = `/history.html?unit=${encodeURIComponent(unitId)}`;
 
   signInAnonymously(auth);
-  onAuthStateChanged(auth, (u) => {
+  onAuthStateChanged(auth, (u)=>{
     if (!u) return;
     const latestRef = ref(db, `units/${unitId}/latest`);
-    onValue(latestRef, (snap) => {
+    onValue(latestRef, snap => {
       const v = snap.val() || {};
       const s = Number(v.supply ?? NaN);
       const r = Number(v.return ?? NaN);
@@ -56,7 +46,7 @@ loadConfig().then(cfg => {
       updatedEl.textContent = v.ts ? new Date(v.ts).toLocaleString() : '';
     });
   });
-}).catch(err => {
+}).catch(err=>{
   console.error(err);
   document.body.insertAdjacentHTML('beforeend', `<pre style="color:red">${err.message}</pre>`);
 });
