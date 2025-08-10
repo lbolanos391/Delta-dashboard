@@ -1,5 +1,5 @@
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open('deltasnap-v2').then(c => c.addAll([
+  e.waitUntil(caches.open('deltasnap-v3').then(c => c.addAll([
     '/', '/index.html', '/history.html', '/app.js', '/history.js',
     '/manifest.json', '/config.json', '/icons/icon-192.png', '/icons/icon-512.png'
   ])));
